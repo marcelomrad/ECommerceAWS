@@ -5,6 +5,7 @@ import * as cdk from 'aws-cdk-lib';
 
 import { EcommerceApiStack } from '../lib/ecommerceApi-stack';
 import { ProductsAppStack } from '../lib/productsApp-stack';
+import { ProductsAppLayersStack } from '../lib/productsAppLayers-stack';
 
 
 // dotenv.config();
@@ -21,10 +22,18 @@ const tags = {
   team : "MradCode"
 }
 
+const productsAppLayersStack = new ProductsAppLayersStack(app, "ProductsAppLayers", {
+  tags: tags,
+  env: env
+});
+
+
 const productsAppStack = new ProductsAppStack(app, "ProductsApp", {
   tags: tags,
   env: env
 });
+
+productsAppStack.addDependency(productsAppLayersStack);
 
 const eCommerceApiStack = new EcommerceApiStack(app, "ECommerceApi", {
   productsFetchHandler: productsAppStack.productsFetchHandler,

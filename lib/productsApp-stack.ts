@@ -2,6 +2,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as lambdaNodeJs from "aws-cdk-lib/aws-lambda-nodejs";
 import * as cdk from "aws-cdk-lib";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
+import * as ssm from "aws-cdk-lib/aws-ssm";
 
 import { Construct } from "constructs";
 
@@ -28,6 +29,10 @@ export class ProductsAppStack extends cdk.Stack {
             writeCapacity: 1,
         });
 
+        //Products Layer
+        const productsLayerArn = ssm.StringParameter.valueForStringParameter(this, "ProductsLayerVersionArn");
+        const productsLayer = lambda.LayerVersion.fromLayerVersionArn(this, "ProductsLayer", productsLayerArn);
+
         //funcao lambda que vai ter como permição o acesso a tabela de forma que ela possa ser apenas LIDA
         this.productsFetchHandler = new lambdaNodeJs.NodejsFunction(this, "productsFetchHandler", {
             functionName: "productsFetchHandler",
@@ -41,7 +46,8 @@ export class ProductsAppStack extends cdk.Stack {
             },
             environment: {
                 PRDUCTS_DDB: this.productsDdb.tableName,
-            }
+            },
+            layers: [productsLayer]
         });
 
         //dando permição para a função lambda poder ler a tabela
@@ -60,7 +66,8 @@ export class ProductsAppStack extends cdk.Stack {
             },
             environment: {
                 PRDUCTS_DDB: this.productsDdb.tableName,
-            }
+            },
+            layers: [productsLayer]
         });
 
         //dando permição para a função lambda poder escrever na tabela
