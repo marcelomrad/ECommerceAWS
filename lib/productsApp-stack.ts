@@ -45,7 +45,7 @@ export class ProductsAppStack extends cdk.Stack {
                 sourceMap: true,
             },
             environment: {
-                PRDUCTS_DDB: this.productsDdb.tableName,
+                PRODUCTS_DDB: this.productsDdb.tableName,
             },
             layers: [productsLayer]
         });
@@ -65,7 +65,7 @@ export class ProductsAppStack extends cdk.Stack {
                 sourceMap: true,
             },
             environment: {
-                PRDUCTS_DDB: this.productsDdb.tableName,
+                PRODUCTS_DDB: this.productsDdb.tableName,
             },
             layers: [productsLayer]
         });
